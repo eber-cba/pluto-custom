@@ -1,0 +1,27 @@
+---
+import UserStatus from "../react/UserStatus.jsx";
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/profile", label: "Perfil" },
+  { href: "/cart", label: "Carrito" },
+];
+---
+
+<nav
+  style="background-color: #f4e6d0; padding: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+>
+  <div style="font-size: 1.5rem; font-weight: bold;">Vintage Shop</div>
+  <div>
+    {
+      links.map((link) => (
+        <a
+          href={link.href}
+          style="margin-right: 1rem; text-decoration: none; color: #333;"
+        >
+          {link.label}
+        </a>
+      ))
+    }
+    <UserStatus client:load />
+  </div>
+</nav>

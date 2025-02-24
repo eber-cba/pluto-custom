@@ -1,0 +1,31 @@
+---
+import Navbar from "../components/common/Navbar.astro";
+import Footer from "../components/common/Footer.astro";
+import RegisterForm from "../components/react/RegisterForm.jsx";
+import AppProvider from "../context/providers/AppProvider.jsx";
+
+const handleRegister = () => {
+  window.location.href = "/";
+};
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Registrarse - Vintage Shop</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f6f1;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <Navbar />
+    <AppProvider client:load>
+      <RegisterForm client:load onRegister={handleRegister} />
+    </AppProvider>
+    <Footer />
+  </body>
+</html>

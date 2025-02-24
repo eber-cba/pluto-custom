@@ -1,0 +1,31 @@
+---
+import Navbar from "../components/common/Navbar.astro";
+import Footer from "../components/common/Footer.astro";
+import LoginForm from "../components/react/LoginForm.jsx";
+import AppProvider from "../context/providers/AppProvider.jsx";
+
+const handleLogin = () => {
+  window.location.href = "/";
+};
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Iniciar Sesión - Vintage Shop</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f6f1;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <Navbar />
+    <AppProvider client:load>
+      <LoginForm client:load onLogin={handleLogin} />
+    </AppProvider>
+    <Footer />
+  </body>
+</html>

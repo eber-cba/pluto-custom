@@ -1,0 +1,28 @@
+---
+import Navbar from "../components/common/Navbar.astro";
+import Footer from "../components/common/Footer.astro";
+import CheckoutContainer from "../components/react/CheckoutContainer.jsx";
+import AppProvider from "../context/providers/AppProvider.jsx";
+let initialTotal = 200;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Checkout - Vintage Shop</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f6f1;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <Navbar />
+    <AppProvider client:load>
+      <CheckoutContainer client:load initialTotal={initialTotal} />
+    </AppProvider>
+    <Footer />
+  </body>
+</html>

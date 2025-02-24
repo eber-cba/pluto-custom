@@ -1,0 +1,75 @@
+---
+import Navbar from "../components/common/Navbar.astro";
+import Footer from "../components/common/Footer.astro";
+import AppProvider from "../context/providers/AppProvider.jsx";
+import React, { useState, useEffect } from "react";
+
+const ProfileContent = () => {
+  const [purchases, setPurchases] = useState([]);
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("purchases") || "[]");
+    setPurchases(data);
+  }, []);
+
+  return (
+    <div style={{ padding: "2rem" }}>
+      <h1>Mi Perfil</h1>
+      <h2>Mis Compras</h2>
+      {purchases.length === 0 ? (
+        <p>No has realizado compras aún.</p>
+      ) : (
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
+          {purchases.map(
+            (
+              purchase: { image: string; name: string; price: number },
+              index: number
+            ) => (
+              <div
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: "10px",
+                  padding: "1rem",
+                  margin: "1rem",
+                  backgroundColor: "#fff",
+                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  width: "200px",
+                }}
+              >
+                <img
+                  src={purchase.image}
+                  alt={purchase.name}
+                  style={{ width: "100%", borderRadius: "10px" }}
+                />
+                <h3>{purchase.name}</h3>
+                <p>${purchase.price}</p>
+              </div>
+            )
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Perfil - Vintage Shop</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f6f1;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <Navbar />
+    <AppProvider client:load>
+      <ProfileContent client:load />
+    </AppProvider>
+    <Footer />
+  </body>
+</html>

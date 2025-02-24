@@ -1,0 +1,60 @@
+---
+import Navbar from "../../components/common/Navbar.astro";
+import Footer from "../../components/common/Footer.astro";
+import products from "../../../api/data/products.json";
+const { id } = Astro.params;
+const product = products.find((p) => p.id === id);
+
+if (!product) {
+  throw new Error("Producto no encontrado");
+}
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{product.name} - Vintage Shop</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f6f1;
+        margin: 0;
+      }
+      .product-container {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 2rem;
+      }
+      .product-image,
+      .product-info {
+        flex: 1;
+        min-width: 300px;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <Navbar />
+    <div class="product-container">
+      <div class="product-image">
+        <img
+          src={product.image}
+          alt={product.name}
+          style="width: 100%; border-radius: 10px;"
+        />
+      </div>
+      <div class="product-info">
+        <h1>{product.name}</h1>
+        <p>{product.description}</p>
+        <p style="font-weight: bold;">Precio: ${product.price}</p>
+        <button
+          onclick="alert('Producto {product.name} agregado al carrito')"
+          style="background-color: #0077cc; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 5px;"
+        >
+          Agregar al Carrito
+        </button>
+      </div>
+    </div>
+    <Footer />
+  </body>
+</html>
