@@ -1,26 +1,29 @@
 import dotenv from "dotenv";
+dotenv.config({ path: "../.env" }); // Cargar las variables de entorno primero
+
 import cors from "cors";
 import express from "express";
 import bodyParser from "body-parser";
-import pkg from "contentful";
-const { createClient } = pkg;
-dotenv.config();
+import contentful from "contentful";
+import path from "path";
 
 import authRoutes from "./routes/auth.js";
 import paymentRoutes from "./routes/payment.js";
 import invoiceRoutes from "./routes/invoice.js";
 import productsRoutes from "./routes/products.js";
-
+const { createClient } = contentful;
 const app = express();
+const port = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(bodyParser.json()); // Use body-parser to parse JSON bodies
+app.use(bodyParser.json()); // Parsear cuerpos JSON
 
-// Contentful client setup
+// Configuración del cliente de Contentful
 const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID,
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
 });
+console.log("CONTENTFUL_ACCESS_TOKEN:", process.env.CONTENTFUL_ACCESS_TOKEN);
 
 client
   .getSpace()
@@ -38,7 +41,7 @@ app.use("/payment", paymentRoutes);
 app.use("/invoice", invoiceRoutes);
 app.use("/products", productsRoutes);
 
-// Error handling middleware for JSON parsing errors
+// Middleware de manejo de errores para errores de parseo JSON
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     console.error("Invalid JSON payload:", err.body);
@@ -48,7 +51,6 @@ app.use((err, req, res, next) => {
   next();
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`Servidor backend corriendo en el puerto ${PORT}`)
+app.listen(port, () =>
+  console.log(`Servidor backend corriendo en el puerto ${port}`)
 );

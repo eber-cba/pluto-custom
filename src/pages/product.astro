@@ -1,0 +1,40 @@
+---
+import ProductCard from "../components/react/ProductCard";
+import pkg from "contentful";
+
+const { createClient } = pkg;
+
+const client = createClient({
+  space: import.meta.env.CONTENTFUL_SPACE_ID,
+  accessToken: import.meta.env.CONTENTFUL_ACCESS_TOKEN,
+});
+
+// Replace 'product' with the correct content type ID from your Contentful space
+const products = await client.getEntries({ content_type: "plutoCustom" });
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Productos - Vintage Shop</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f6f1;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <h1>Productos</h1>
+      {
+        products.items.map((product) => (
+          <div data-key={product.sys.id}>
+            <ProductCard product={product.fields} />
+          </div>
+        ))
+      }
+    </section>
+  </body>
+</html>

@@ -1,28 +1,24 @@
+// authRoutes.js
 import express from "express";
 import jwt from "jsonwebtoken";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth } from "../../src/firebase.js"; // Importa la instancia de autenticación de Firebase
+import admin from "../../firebase/firebaseAdmin.js"; // Ajusta la ruta según tu estructura
 
 const router = express.Router();
-const users = [];
 
 // Registro de usuario
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
   try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
+    // Crea el usuario en Firebase usando el Admin SDK
+    const userRecord = await admin.auth().createUser({
       email,
-      password
-    );
-    const newUser = { id: userCredential.user.uid, email };
-    users.push(newUser);
+      password,
+    });
+
+    // Puedes guardar datos adicionales en tu base de datos si lo requieres
+    // Genera un token JWT propio para la sesión
     const token = jwt.sign(
-      { id: newUser.id, email: newUser.email },
+      { uid: userRecord.uid, email: userRecord.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -34,19 +30,15 @@ router.post("/register", async (req, res) => {
 
 // Inicio de sesión
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  // En este flujo, el cliente debe enviar un ID token obtenido al autenticarse con Firebase
+  const { idToken } = req.body;
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = users.find((u) => u.email === email);
-    if (!user) {
-      return res.status(400).json({ error: "Credenciales inválidas" });
-    }
+    // Verifica el ID token usando el Admin SDK
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+    // Genera un token JWT para manejar sesiones en tu backend
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { uid: decodedToken.uid, email: decodedToken.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );

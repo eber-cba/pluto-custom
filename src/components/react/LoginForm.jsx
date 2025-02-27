@@ -13,8 +13,27 @@ const LoginForm = ({ onLogin }) => {
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      onLogin();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      // Obtener el ID token de Firebase
+      const idToken = await userCredential.user.getIdToken();
+
+      // Enviar el ID token a tu backend
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await response.json();
+      if (data.token) {
+        // Puedes guardar el token recibido o manejar la sesión según tu lógica
+        onLogin(data.token);
+      } else {
+        alert("Error en el login: " + data.error);
+      }
     } catch (error) {
       alert("Error al iniciar sesión: " + error.message);
     }
@@ -23,8 +42,20 @@ const LoginForm = ({ onLogin }) => {
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      onLogin();
+      const userCredential = await signInWithPopup(auth, provider);
+      const idToken = await userCredential.user.getIdToken();
+
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await response.json();
+      if (data.token) {
+        onLogin(data.token);
+      } else {
+        alert("Error en el login con Google: " + data.error);
+      }
     } catch (error) {
       alert("Error al iniciar sesión con Google: " + error.message);
     }
